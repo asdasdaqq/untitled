@@ -21,7 +21,6 @@ def main():
     dp = updater.dispatcher
     dp.add_handler(CommandHandler('bop',bop))
     updater.start_polling()
-    print(update.message.text)
     updater.idle()
 if __name__ == '__main__':
     main()
