@@ -15,6 +15,7 @@ def get_image_url():
 def bop(bot, update):
     url = get_image_url()
     chat_id = update.message.chat_id
+    bot.send_message(chat_id=chat_id, text='Вот тебе собачка')
     bot.send_photo(chat_id=chat_id, photo=url)
 def main():
     updater = Updater('869686653:AAGXT2cDZHEDpGZ0u67YOxag7pP0YmpvtWw')
