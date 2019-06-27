@@ -2,8 +2,12 @@ from telegram.ext import Updater, InlineQueryHandler, CommandHandler
 import requests
 import re
 def get_url(api):
-    contents = requests.get(api).json()
-    url = contents['url']
+    if 'woof' in api:
+        contents = requests.get(api).json()
+        url = contents['url']
+    else:
+        contents = requests.get(api).json()[0]
+        url = contents['url']
     return url
 def get_image_url(api):
     allowed_extension = ['jpg','jpeg','png']
