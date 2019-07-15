@@ -46,7 +46,7 @@ def main():
     dp = updater.dispatcher
     dp.add_handler(CommandHandler('dog', dog))
     dp.add_handler(CommandHandler('cat', cat))
-    dp.add_handler(MessageHandler(listen))
+    dp.add_handler(MessageHandler(callback=listen))
     updater.start_polling()
     updater.idle()
 
