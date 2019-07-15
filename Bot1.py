@@ -36,11 +36,17 @@ def cat(bot, update):
     bot.send_photo(chat_id=chat_id, photo=url)
 
 
+def listen(bot,update):
+    chat_id = update.message.chat_id
+    bot.send_message(chat_id=chat_id, text=update.message.text)
+
+
 def main():
     updater = Updater('869686653:AAGXT2cDZHEDpGZ0u67YOxag7pP0YmpvtWw')
     dp = updater.dispatcher
     dp.add_handler(CommandHandler('dog', dog))
     dp.add_handler(CommandHandler('cat', cat))
+    dp.add_handler(MessageHandler(Filters.text,listen))
     updater.start_polling()
     updater.idle()
 
