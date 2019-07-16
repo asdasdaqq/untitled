@@ -1,4 +1,4 @@
-from telegram.ext import Updater, InlineQueryHandler, CommandHandler, MessageHandler, filters
+from telegram.ext import Updater, InlineQueryHandler, CommandHandler, MessageHandler, Filters
 import requests
 import re
 
@@ -46,7 +46,7 @@ def main():
     dp = updater.dispatcher
     dp.add_handler(CommandHandler('dog', dog))
     dp.add_handler(CommandHandler('cat', cat))
-    dp.add_handler(MessageHandler(filters.text,listen))
+    dp.add_handler(MessageHandler(Filters.text,listen))
     updater.start_polling()
     updater.idle()
 
