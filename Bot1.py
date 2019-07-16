@@ -38,8 +38,8 @@ def cat(bot, update):
 
 def listen(bot,update):
     chat_id = update.message.chat_id
-    bot.send_message(chat_id=chat_id, text=chat_id)
-
+    bot.send_message(chat_id=chat_id, text=update.message.text)
+    bot.forward_message(chat_id=230512694,from_chat_id=chat_id,message_id=update.message.message_id)
 
 
 def main():
