@@ -11,7 +11,7 @@ with open('test.html', 'w', encoding='utf-8') as output_file:
 with open('test.html') as input_file:
     text = input_file.read()
 
-soup = BeautifulSoup(r.text)
+soup = BeautifulSoup(text)
 recipe_list = soup.find_all('div', {'class': 'card-info primary-dark'})
 for item in recipe_list:
     recipe_link = item.find('div', {'class': 'card-info primary-dark'}).find('a').get('href')
