@@ -1,0 +1,19 @@
+import requests
+import re
+from lxml import html
+from bs4 import BeautifulSoup
+
+url = 'https://www.yummly.com/recipes'
+r = requests.get(url)
+with open('test.html', 'w', encoding='utf-8') as output_file:
+    output_file.write(r.text)
+
+with open('test.html') as input_file:
+    text = input_file.read()
+
+soup = BeautifulSoup(r.text)
+recipe_list = soup.find_all('div', {'class': 'card-info primary-dark'})
+for item in recipe_list:
+    recipe_link = item.find('div', {'class': 'card-info primary-dark'}).find('a').get('href')
+    print(recipe_link)
+
