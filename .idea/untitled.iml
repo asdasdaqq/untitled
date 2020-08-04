@@ -1,11 +1,7 @@
-<r>
-	<mainRole>2c6af1f3-1cbf-4b5a-9409-80f0730ad375</mainRole>
-	<items>
-		<i>
-			<role>bb1de21d-0bdc-e095-5aee-5ff9a9b24b5c</role>
-			<scheduleType>BYSESSION</scheduleType>
-			<paymentPerHour>105.000000000</paymentPerHour>
-			<steadySalary>17850.000000000</steadySalary>
-		</i>
-	</items>
-</r>
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="4">
+  <component name="NewModuleRootManager">
+    <orderEntry type="jdk" jdkName="Python 3.7" jdkType="Python SDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

@@ -17,63 +17,84 @@ def get_url(api):
 
 
 def get_image_url(api):
-    allowed_extension = ['jpg','jpeg','png']
+    allowed_extension = ['jpg', 'jpeg', 'png']
     file_extension = ''
     while file_extension not in allowed_extension:
         url = get_url(api)
-        file_extension = re.search("([^.]*)$",url).group(1).lower()
+        file_extension = re.search("([^.]*)$", url).group(1).lower()
     return url
 
 
-def dog(bot, update):
+def dog(update,context):
     url = get_image_url('https://random.dog/woof.json')
-    chat_id = update.message.chat_id
-    bot.send_message(chat_id=chat_id, text='Вот тебе собачка')
-    bot.send_photo(chat_id=chat_id, photo=url)
+    chat_id = update.message['chat']['id']
+    context.bot.send_message(chat_id=chat_id, text='Вот тебе собачка')
+    context.bot.send_photo(chat_id=chat_id, photo=url)
 
 
-def cat(bot, update):
+def cat(update,context):
     url = get_image_url('https://api.thecatapi.com/v1/images/search')
-    chat_id = update.message.chat_id
-    bot.send_message(chat_id=chat_id, text='Вот тебе котик')
-    bot.send_photo(chat_id=chat_id, photo=url)
+    chat_id = update.message['chat']['id']
+    context.bot.send_message(chat_id=chat_id, text='Вот тебе котик')
+    context.bot.send_photo(chat_id=chat_id, photo=url)
 
 
-def listen(bot,update):
-    chat_id = update.message.chat_id
-    bot.send_message(chat_id=chat_id, text=update.message.text)
-    bot.forward_message(chat_id=230512694,from_chat_id=chat_id,message_id=update.message.message_id)
+def listen(update, context):
+    chat_id = update.message['chat']['id']
+    context.bot.send_message(chat_id=chat_id, text=update.message['text'])
+    context.bot.forward_message(chat_id=230512694, from_chat_id=chat_id, message_id=update.message['message_id'])
 
-def food(bot,update):
+
+def food(update,context):
     recipe_link = []
     url = 'https://www.yummly.com/recipes'
     r = requests.get(url)
-    with open('test.html', 'w', encoding='utf-8') as output_file:
-        output_file.write(r.text)
 
-    with open('test.html', encoding='utf-8') as input_file:
-        text = input_file.read()
-
-    soup = BeautifulSoup(text, features='lxml')
-    recipe_list = soup.find_all('div', {'class': 'recipe-card-img'})
+    recipe_link = []
+    url = 'https://www.yummly.com/recipes'
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, features='lxml')
+    recipe_list = soup.find_all(href=re.compile("/recipe/"))  # Поиск через регулярку
     for item in recipe_list:
-        recipe_link.append(item.get('data-pin-url'))
+        recipe_link.append(item.get('href'))
 
-    answ=recipe_link[random.randint(0, len(recipe_link))]
-    chat_id = update.message.chat_id
-    bot.send_message(chat_id=chat_id, text='Вот тебе рецепт чего-то вкусненького')
-    bot.send_message(chat_id=chat_id, text=answ)
+    url = 'https://www.yummly.com' + recipe_link[random.randint(0, len(recipe_link))]
+    link_answ=url
+    # url='https://www.yummly.com/recipe/Melt-In-Your-Mouth-Baked-Chicken-Breasts-9073095'
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, features='lxml')
+    recipe_name_answ = soup.find('h1', {'class': 'recipe-title font-bold h2-text primary-dark'}).text  # Название рецепта
+    ingredients_list = soup.find_all('li', {'class': 'IngredientLine'})  # Список ингредиентов
+    ingredients_answ = ''
+    for ingr in ingredients_list:
+        ingredients_answ += (ingr.text+'\n')
+
+    url += '?makeMode=true'
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, features='lxml')
+    steps = soup.find_all('div', {'class': 'step-text h4-text'})  # Шаги приготовления
+    steps_answ = ''
+    for (offset, step) in enumerate(steps):
+        steps_answ += ('Step ' + str(offset + 1) + ': ' + str(step.text) + '\n' + '\n')
+
+    chat_id = update.message['chat']['id']
+    context.bot.send_message(chat_id=chat_id, text='Вот тебе рецепт чего-то вкусненького')
+    context.bot.send_message(chat_id=chat_id, text=recipe_name_answ)
+    context.bot.send_message(chat_id=chat_id, text=link_answ)
+    context.bot.send_message(chat_id=chat_id, text=ingredients_answ)
+    context.bot.send_message(chat_id=chat_id, text=steps_answ)
 
 
 def main():
-    updater = Updater('869686653:AAGXT2cDZHEDpGZ0u67YOxag7pP0YmpvtWw')
+    updater = Updater('869686653:AAGXT2cDZHEDpGZ0u67YOxag7pP0YmpvtWw', use_context=True)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler('dog', dog))
     dp.add_handler(CommandHandler('cat', cat))
     dp.add_handler(CommandHandler('food', food))
-    dp.add_handler(MessageHandler(Filters.text,listen))
+    dp.add_handler(MessageHandler(Filters.text, listen))
     updater.start_polling()
     updater.idle()
+
 
 if __name__ == '__main__':
     main()
